@@ -1,0 +1,55 @@
+Homework 1 Answers - Alexander Swanson
+
+1.1 -
+Q.)
+Suppose the hypothetical processor of Figure 1.3 also has two I/O instructions:
+			0011 = Load AC from I/O
+			0111 = Store AC to I/O
+In these cases, the 12-bit address identifies a particular external device. Show the program execution (using the format of Figure 1.4) for the following program:
+1. Load AC from device 5
+2. Add contents of memory location 940
+3. Store Ac to device 6
+Assume the next value retrieved from device 5 is 3, and location 940 contains a value of 2. 
+
+A).
+
+
+1.3 -
+Q.) 
+Consider a hypothetical 32-bit microprocessor having 32-bit instructions composed of two fields. The first byte contains the opcode, and the remainder an immediate operand or an operand address.
+a. What is the maximum directory addressable memory capacity (in bytes)?
+b. Discuss the impact on the system speed if the microprocessor bus has:
+	1. a 32-bit local address bus and a 16-bit local data bus, or;
+	2. a 64-bit local address bus and a 16-bit local data bus.
+c. How many bits are needed for the program counter and the instruction register?
+
+A.)
+
+
+1.10 -
+Q.)
+Consider the following code:
+  for (i = 0; i < 20; i++)
+    for (j = 0; j < 10; j++)
+      a[i] = a[i] * j
+a. Give one example of the spacial locality in the code.
+b. Give one example of the temporal locality in the code.
+
+A.)
+
+
+1.13 -
+Q.)
+A computer has a cache, main memory, and a disk used for virtual memory. If a referenced word is in the cache, 20 ns are required to access it. If it is in main memory but not in the cache, 60 ns are needed to load it into the cache (this includes the time to originally check the cache), then the reference is started again. If the owrd is not in the main memory, 12 ns are required to fetch the word from disk, followed by 60 ns to copy it to the cache, then the reference is started again. The cache hit ratio is 0.9 and the main memory hit ratio is 0.6. What is the average time in ns required to acess a referenced word on this system.
+
+A.)
+
+
+
+2.2 -
+
+2.3 -
+
+2.4 -
+
+
