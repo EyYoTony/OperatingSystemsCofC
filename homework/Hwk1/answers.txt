@@ -5,25 +5,42 @@ Q.)
 Suppose the hypothetical processor of Figure 1.3 also has two I/O instructions:
 			0011 = Load AC from I/O
 			0111 = Store AC to I/O
-In these cases, the 12-bit address identifies a particular external device. Show the program execution (using the format of Figure 1.4) for the following program:
+In these cases, the 12-bit address identifies a particular external device. 
+Show the program execution (using the format of Figure 1.4) for the following program:
 1. Load AC from device 5
 2. Add contents of memory location 940
-3. Store Ac to device 6
+3. Store AC to device 6
 Assume the next value retrieved from device 5 is 3, and location 940 contains a value of 2. 
 
-A.)
+
+A.) I've decided not to include the PC as it is arbitrary, and the instructions will be loaded into the IR in the fetch stage. 
+    The other values are listed in the question. 
+1. Instruction(Bin) - 0011000000000101, Instruction(Hex) - 3005
+   AC - 0003
+2. Instruction(Bin) - 0101100101000000, Instruction(Hex) - 5940
+   AC - 0005
+3. Instruction(Bin) - 0111000000000110, Instruction(Hex) - 7006
+   AC - 0005
 
 
 1.3 -
 Q.) 
 Consider a hypothetical 32-bit microprocessor having 32-bit instructions composed of two fields. The first byte contains the opcode, and the remainder an immediate operand or an operand address.
-a. What is the maximum directory addressable memory capacity (in bytes)?
+a. What is the maximum directly addressable memory capacity (in bytes)?
 b. Discuss the impact on the system speed if the microprocessor bus has:
 	1. a 32-bit local address bus and a 16-bit local data bus, or;
 	2. a 64-bit local address bus and a 16-bit local data bus.
 c. How many bits are needed for the program counter and the instruction register?
 
+
 A.)
+a. - There are 32 - 8 = 24 bits (3 bytes) to work with for the address. 
+     The maximum directly addressable memory capacity would be 2^24 (16,777,215 in decimal)
+b. - The local address bus is used to specify the memory address, while the local data bus holds the value that is being loaded from or stored to the register from the address bus. 
+     1/2. Since the 16-bit local data bus stays the same, inceasing the size of the local address bus shouldn't change the system speed. As this only increases the amount of registers able to be referenced. 
+          If the "local memory" is part of the main memory on the cpu however, then having more adressable memory in the cpu will make the system speed faster as it won't have to reach for slow memory outside of the cpu as often.   
+c. - Since the instructions are 32 bits long, the IR needs to have 32 bits allocated to it. 
+     The PC needs to have 24 bits as the maximum directly addressable memory is 24 bits long (3 bytes)
 
 
 1.10 -
