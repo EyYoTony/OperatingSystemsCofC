@@ -72,25 +72,30 @@ Find the average access time for the cache and main memory:
 Then find the average access time for the whole system (w/ disk) (this is assuming that the main memory hit ratio is the ratio in which the referenced word has already not been found in cache memory)
 0.6 x 26ns + 0.4 x 92ns = 15.6ns + 36.8ns = 52.4ns
 
+
+
 2.2 -
 Q.)
 An I/O-bound program is one that, if run alone, would spend more time waiting for I/O than the processor. A processor-bound program is the opposite. Suppose a short-term scheduling algorithm favors those programs that have used little processor time in recent past. Explain why this algorithm favors I/O-bound programs and yet does not permanently deny processor time to processor-bound programs.
 
 A.)
+A short-term scheduling alforithm which favors programs that use less processor time will often favor I/O programs. As I/O programs often wait relatively long periods of time for the I/O to respond, which doesn't require processor time while to program wait. So to optimize throughput of the processor, this schedule favors I/O and works on the processot-bound programs in main memory while it is waiting for a response from the I/O program (interupt).
 
 
 2.3 -
 Q.)
-Contrast the scheduling policies you might use when trying to optimize a time-sharing system with those you would use ti optimize a multiprogrammed branch system.
+Contrast the scheduling policies you might use when trying to optimize a time-sharing system with those you would use to optimize a multiprogrammed branch system.
 
 A.)
-
+Time-sharing systems share processor times between multiple users. This kind of system was mainly used in the 1960's when computers were large and costly. In this system Multiple users can simultaniously access the system through termials. The system works on each user's programs in bursts.
+The scheduling policy is that at certain intervals of time the system clock generates an interrupt. At each interrupt the OS regains control and assigns the processor to another user (time slicing). 
+While Time-sharing systems look to optimize multiple users, a multiprogrammed batch system looks to optimize throughput by running programs in efficient sequences.
 
 2.4 -
 Q.)
 What is the purpose of system calls, and how do system calls relate to the OS and to the concept of of dual-mode (kernal-mode and user-mode) operation?
 
 A.)
-
-
+System calls are the means by which a process requests a specific kernel service. System calls are grouped into six categories: files system, process, scheduling, interprocess communication, socket(networking), and miscellaneous. 
+They relate to the OS and concept of dual-mode, as system calls result in the kernal-mode performing that operation.
 
