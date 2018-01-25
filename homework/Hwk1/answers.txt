@@ -53,15 +53,24 @@ a. Give one example of the spacial locality in the code.
 b. Give one example of the temporal locality in the code.
 
 A.)
-
+a. - Spactial locality is the tendency of execution to involve a number of memory locations that are clustered (usually sequential instructions). The example of spacial locality in this code is that the program will move sequentially through the array "a" which is probably stored as a cluster in the memory.
+b. - Temporal locality is the tendency for a processor to access memory locations that have been used recently. The example of temporal locality in this code is that the program will write to the same a[i] location 10 times before it changes to the next one.
 
 1.13 -
 Q.)
-A computer has a cache, main memory, and a disk used for virtual memory. If a referenced word is in the cache, 20 ns are required to access it. If it is in main memory but not in the cache, 60 ns are needed to load it into the cache (this includes the time to originally check the cache), then the reference is started again. If the owrd is not in the main memory, 12 ns are required to fetch the word from disk, followed by 60 ns to copy it to the cache, then the reference is started again. The cache hit ratio is 0.9 and the main memory hit ratio is 0.6. What is the average time in ns required to acess a referenced word on this system.
+A computer has a cache, main memory, and a disk used for virtual memory. If a referenced word is in the cache, 20 ns are required to access it. If it is in main memory but not in the cache, 60 ns are needed to load it into the cache (this includes the time to originally check the cache), then the reference is started again. If the word is not in the main memory, 12 ns are required to fetch the word from disk, followed by 60 ns to copy it to the cache, then the reference is started again. The cache hit ratio is 0.9 and the main memory hit ratio is 0.6. What is the average time in ns required to access a referenced word on this system.
 
 A.)
-
-
+The average time in ns required to access a referenced word on this system = 52.4ns
+As H x T1 + (1-H) x (T1 + T2) = Ts (pg 36 textbook) 
+Ts = Average (system) access time 
+T1 = Access time of M1 (e.g. cache, disk cache)
+T2 = Access time of M2 (e.g. main memory, disk)
+H = Hit ratio (fraction of time reference is found in M1)
+Find the average access time for the cache and main memory:
+0.9 x 20ns + 0.1 x 80ns = 18ns + 8ns = 26ns
+Then find the average access time for the whole system (w/ disk) (this is assuming that the main memory hit ratio is the ratio in which the referenced word has already not been found in cache memory)
+0.6 x 26ns + 0.4 x 92ns = 15.6ns + 36.8ns = 52.4ns
 
 2.2 -
 Q.)
