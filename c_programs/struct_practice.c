@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int main(int argc, char** argv){
+int main(void){
 
 	struct birthday {
 		char *name;
@@ -15,13 +16,17 @@ int main(int argc, char** argv){
 
 	printf("value of first_letter is %c\n", first_letter);
 
-	char *name = "hello";
+	char *name_arr = strdup("hello");
 
-	*name = 'b';
+	*name_arr = 'b';
 
-	printf("first char of name is %c\n", *name);
+	printf("address of name is %p\n", &name_arr);
 
-	printf("value of name is %s\n", name);
+	printf("first char of name is %c\n", *name_arr);
+
+	printf("value of name is %s\n", name_arr);
+
+	free(name_arr);
 
 	return 0;
 }
