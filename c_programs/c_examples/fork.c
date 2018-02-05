@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     // parent process
     printf("This is the parent [Process pid: %d].\n", getpid());
     printf("parent waiting on child...\n");
-    wait(NULL);
+    wait(NULL); //Waits intil ANY child has finished (state is changed)
     printf("parent done waiting on child\n");
   }
   else if(pid == 0)  {
