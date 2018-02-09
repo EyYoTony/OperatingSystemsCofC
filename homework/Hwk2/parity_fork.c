@@ -6,7 +6,7 @@
 
 //#define DEBUG 0 
 //I am using the int original
-int get_parity(int n, int original)
+void get_parity(int n, int original)
 {
 	const static char *parity[2] = {"EVEN", "ODD"}; 
 	int child_n;
@@ -66,8 +66,7 @@ int main(int argc, char** argv)
 			printf("Negative integer given, please give a non-negative integer\n");
 		}
 		else{
-			//since we are exiting, we can not also return the data as they both kill the original process
-			printf("output of get_parity: %d\n", get_parity((int)strtol(argv[1], NULL, 10), (int)strtol(argv[1], NULL, 10)));
+			get_parity((int)strtol(argv[1], NULL, 10), (int)strtol(argv[1], NULL, 10));
 		}
 	}
 	else{
