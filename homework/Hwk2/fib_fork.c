@@ -9,25 +9,25 @@
 
 // value for which to compute the Fibonacci number
 #define LIMIT 7
-#define DEBUG 0
+#define DEBUG 0 
 
-void do_fib(int n)
+void do_fib(int val)
 {
   int fibn_1, fibn_2;   // fib(n-1) and fib(n-2), respectively
   int fibn;             // sum of fib(n-1) and fib(n-2)
   pid_t pidn_1, pidn_2; // pids for fib(n-1) and fib(n-2), respectively
   int status;           // status used in waitpid()
 
-  if (n < 2)    // base case
-    exit(n);    // fib(1) = 1 and fib(0) = 0  (ie. just return n)
+  if (val < 2)    // base case
+    exit(val);    // fib(1) = 1 and fib(0) = 0  (ie. just return n)
 
   if ((pidn_1 = fork()) == 0) {  // only "child" enters the if statement
-    do_fib(n-1);   //  NOTE:  each do_fib() call executes and exit()
+    do_fib(val-1);   //  NOTE:  each do_fib() call executes and exit()
     // So, don't need an exit here nor use an if-else statement
   }
 
   if ((pidn_2 = fork()) == 0) {  // only "child" enters the if statement
-    do_fib(n-2);   //  NOTE:  each do_fib() call executes and exit()
+    do_fib(val-2);   //  NOTE:  each do_fib() call executes and exit()
     // So, don't need an exit here nor use an if-else statement
   }
 
@@ -48,7 +48,7 @@ void do_fib(int n)
   printf("fib from pid %d = %d\n", getpid(), fibn);  // note getpid()
 #endif
 
-  if (n == LIMIT)
+  if (val == LIMIT)
     printf("fib(%d) = %d\n", LIMIT, fibn);
 
   exit(fibn);  // exit with fib value so as to return it to the waiting parent
