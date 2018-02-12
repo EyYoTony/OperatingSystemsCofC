@@ -1,0 +1,2 @@
+hello
+This is the value of fd: 1
