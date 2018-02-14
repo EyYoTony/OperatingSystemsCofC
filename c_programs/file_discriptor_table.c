@@ -23,7 +23,9 @@ Table Defaults
 
 execv ends the process and converts it to the command given while using the same FDT
 
-execv("/bin/ls", pargs)
-execv("/usr/bin/wc", cargs)
+execv("/bin/ls", pargs);
+execv("/usr/bin/wc", cargs);
+char* pargs[] = {"ls", NULL};
+char* cargs[] = {"wc", "-l", NULL}
 
 */

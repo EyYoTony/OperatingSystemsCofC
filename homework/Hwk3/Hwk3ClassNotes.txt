@@ -1,0 +1,25 @@
+Example Command:
+
+>> du -a | sort -rn | more
+
+Pseudo Code:
+
+int i=0;
+while(p_cmd -> argv[i] != NULL){
+	if(my_strequal(p_cmd -> argv[i], "|")){
+		found_pipe = true;
+	}
+
+}
+
+Model:
+
+		str arr
+argv -> [  ●--]-> "du"
+		[  ●--]-> "-a"
+		[  ●--]-> "|"
+		[  ●--]-> "sort"
+		[  ●--]-> "-rn"
+		[  ●--]-> "|"
+		[  ●--]-> "more"
+		[  ●--]-> NULL
