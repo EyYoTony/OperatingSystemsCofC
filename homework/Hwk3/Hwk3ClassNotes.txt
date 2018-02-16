@@ -1,6 +1,8 @@
 Example Command:
 
 >> du -a | sort -rn | more
+>> find /home/leclerc -name 'shell.c' -print | sort | wc -l
+>> echo 'a b c d e f g' | wc -c
 
 Pseudo Code:
 
@@ -9,8 +11,10 @@ while(p_cmd -> argv[i] != NULL){
 	if(my_strequal(p_cmd -> argv[i], "|")){
 		found_pipe = true;
 	}
-
+	i++
 }
+
+p_cmd -> argv = (*p_cmd).argv
 
 Model:
 
@@ -23,3 +27,11 @@ argv -> [  ●--]-> "du"
 		[  ●--]-> "|"
 		[  ●--]-> "more"
 		[  ●--]-> NULL
+
+
+Child -
+p_cmd -> argv[i] = NULL;
+p_cmd -> argv += start;
+filename = find_fullpath(p_cmd);
+execv(filename, p_cmd -> argv)
+

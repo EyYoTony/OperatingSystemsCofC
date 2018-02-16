@@ -119,6 +119,13 @@ int execute(command_t* p_cmd)
     exit(1);
   }
 
+  //print argv values
+  int i=0;
+  while(p_cmd -> argv[i] != NULL){
+    printf("%s \n", p_cmd -> argv[i]);
+    i++;
+  }
+
   return wait(&status);   // wait for child to exit()
 }
 
