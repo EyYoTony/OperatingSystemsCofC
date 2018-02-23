@@ -5,6 +5,7 @@
 int main(int argc, char** argv)
 {
   int pid;
+  int pid_c;
 
   pid = fork();
   if(pid > 0) {
@@ -16,6 +17,9 @@ int main(int argc, char** argv)
   }
   else if(pid == 0)  {
     // child process
+    if ((pid = fork()) == 0) {
+      printf("This is the child fork, just seeing what happens");
+    }
     printf("fork created [Process id: %d].\n", getpid());
     printf("fork parent process id: %d.\n", getppid());
     printf("child waiting for 2 seconds...\n");

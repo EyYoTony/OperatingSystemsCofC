@@ -104,6 +104,7 @@ int execute(command_t* p_cmd)
 {
   int pid;
   int status;
+  int fds[2];
   char* fullpath = find_fullpath(p_cmd);  // try to get the fullpath of command
 
   if (fullpath == NULL) {
@@ -111,22 +112,56 @@ int execute(command_t* p_cmd)
     return 0;
   }
 
-  if ((pid = fork()) == 0) {
-    // child executes here
+  if(p_cmd -> argv[0] == NULL){
+    return 0;
+  }
+
+  pipe(fds);
+
+  // int i = 0;
+  // while(p_cmd -> argv[i] != NULL && pid != 0){
+  //   printf("My current value: %s \n", p_cmd -> argv[i]);
+  //   if(pid == 0){
+  //     execv(fullpath, p_cmd->argv);
+
+  //     perror("Execute terminated with an error condition!\n");
+  //     exit(1);
+  //   }
+  //   if(my_strequal(p_cmd -> argv[i], "|")){
+  //       p_cmd -> argv[i] = NULL;
+  //       pid = fork();
+  //       p_cmd -> argv += i+1;
+  //       printf("%s \n", p_cmd -> argv[0]);
+  //       i = 0;
+  //   }
+  //   i++;
+  // }
+
+
+  if((pid = fork()) == 0){
     // NOTE:  no need to free(fullpath) ---- ask yourself why?
+    int i = 0;
+    while(p_cmd -> argv[i] != NULL && !my_strequal(p_cmd -> argv[i], "|")){
+      i++;
+    }
+    
+    if(p_cmd -> argv[i] == NULL){
+      execv(fullpath, p_cmd->argv);
+    }
+
+    //argv manipulation and recursive call
+    p_cmd -> argv[i] = NULL;
+    p_cmd -> argv += i+1;
+    execute(p_cmd);
+    p_cmd -> argv -= i+1;
+
     execv(fullpath, p_cmd->argv);
+
     perror("Execute terminated with an error condition!\n");
     exit(1);
   }
 
-  //print argv values
-  int i=0;
-  while(p_cmd -> argv[i] != NULL){
-    printf("%s \n", p_cmd -> argv[i]);
-    i++;
-  }
-
-  return wait(&status);   // wait for child to exit()
+  return waitpid(pid, &status, 0);   // wait for child to exit()
 }
 
 char* find_fullpath(command_t* p_cmd)

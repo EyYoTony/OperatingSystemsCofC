@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 {
   int child_process_status;
   int fds[2];
-  pid_t cpid1, cpid2;
+  pid_t cpid1;
   char* pargs[] = { "ls", NULL };
   char* cargs[] = { "wc", "-l", NULL };
      
@@ -18,18 +18,13 @@ int main(int argc, char** argv)
     close(fds[0]);           /* we don't need this */
     execv("/bin/ls", pargs);
   }
-             
-  if ((cpid2 = fork()) == 0) {
+  else{   
     close(0);               /* close normal stdin */
     dup(fds[0]);            /* make stdin same as fds[0] */
     close(fds[1]);          /* we don't need this */
     execv("/usr/bin/wc", cargs);
   }
-
   close(fds[0]);
-  close(fds[1]);
   waitpid(cpid1, &child_process_status, 0);
-  waitpid(cpid2, &child_process_status, 0);
-  
   return 0;
 }
