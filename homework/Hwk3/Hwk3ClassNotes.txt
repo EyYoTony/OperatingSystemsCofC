@@ -19,19 +19,28 @@ p_cmd -> argv = (*p_cmd).argv
 Model:
 
 		str arr
-argv -> [  ●--]-> "du"
-		[  ●--]-> "-a"
-		[  ●--]-> "|"
-		[  ●--]-> "sort"
-		[  ●--]-> "-rn"
-		[  ●--]-> "|"
-		[  ●--]-> "more"
-		[  ●--]-> NULL
+argv -> [  ●--]-> "du"     0
+		[  ●--]-> "-a"     1
+		[  ●--]-> "|"      2
+		[  ●--]-> "sort"   3 0
+		[  ●--]-> "-rn"    4 1
+		[  ●--]-> "|"      5 2
+		[  ●--]-> "more"   6 3 0
+		[  ●--]-> NULL     7 4 1
 
 
-Child -
-p_cmd -> argv[i] = NULL;
-p_cmd -> argv += start;
+Child(forked) - //since we are working in the child if we go out of bounds it doesn't affect the parents arg_v array
+if pipe or null
+p_cmd -> argv[i] = NULL; //make pipe null so that child can work up to that point
+p_cmd -> argv += start; //move up index to next command
 filename = find_fullpath(p_cmd);
 execv(filename, p_cmd -> argv)
+
+
+//loop through argv values
+  // int i=0;
+  // while(p_cmd -> argv[i] != NULL || (!my_strequal(p_cmd -> argv[i] ,"|"))){
+  //   printf("%s", p_cmd -> argv[i]);
+  //   i++;
+  // }
 

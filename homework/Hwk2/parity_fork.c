@@ -56,7 +56,7 @@ void get_parity(int n, int original)
 
 }
 
-int main(int argc, char** argv)
+int main(int argc, char** argv)	
 {
 	if(argc == 1){
 		printf("No parameter given, please give a non-negative integer\n");
