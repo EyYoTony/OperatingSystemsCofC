@@ -104,64 +104,72 @@ int execute(command_t* p_cmd)
 {
   int pid;
   int status;
+  char* fullpath = find_fullpath(p_cmd);
   int fds[2];
-  char* fullpath = find_fullpath(p_cmd);  // try to get the fullpath of command
+  int c_pid1, c_pid2;
+
+  //find the pipe position in argv
+  int pipe_pos = 0;
+  for (int i = 1; i < p_cmd->argc; i++){
+    if (my_strequal(p_cmd -> argv[i], "|")){
+      pipe_pos = i;
+      break;
+    }
+  }
 
   if (fullpath == NULL) {
     fprintf(stderr, "fullpath is NULL in execute\n");
     return 0;
   }
 
-  if(p_cmd -> argv[0] == NULL){
+  //if found a pipe, else execute
+  if (pipe_pos != 0){
+    //initialize pipe
+    pipe(fds);
+
+    //execute first section of fork (make the fork symbol NULL so execv works)
+    if ((c_pid1 = fork()) == 0){
+      p_cmd -> argv[pipe_pos] = NULL;
+      fullpath = find_fullpath(p_cmd);
+      close(1);
+      dup(fds[1]);
+      close(fds[0]);
+      execv(fullpath, p_cmd -> argv);
+    }
+
+    //format second section of fork and execute that
+    if((c_pid2 = fork()) == 0){
+      p_cmd -> argv += pipe_pos + 1;
+      p_cmd -> argc -= pipe_pos + 1;
+      //not including this gives errors b/c it will retain the old name which find_fullpath uses to find the command
+      p_cmd -> name = p_cmd -> argv[0];
+      fullpath = find_fullpath(p_cmd);
+      close(0);
+      dup(fds[0]);
+      close(fds[1]);
+      execute(p_cmd);
+      exit(1);
+    }
+
+    //we don't need the pipe anymore in either child
+    close(fds[0]);
+    close(fds[1]);
+    waitpid(c_pid1, NULL, 0);
+    waitpid(c_pid2, NULL, 0);
+
     return 0;
   }
 
-  pipe(fds);
-
-  // int i = 0;
-  // while(p_cmd -> argv[i] != NULL && pid != 0){
-  //   printf("My current value: %s \n", p_cmd -> argv[i]);
-  //   if(pid == 0){
-  //     execv(fullpath, p_cmd->argv);
-
-  //     perror("Execute terminated with an error condition!\n");
-  //     exit(1);
-  //   }
-  //   if(my_strequal(p_cmd -> argv[i], "|")){
-  //       p_cmd -> argv[i] = NULL;
-  //       pid = fork();
-  //       p_cmd -> argv += i+1;
-  //       printf("%s \n", p_cmd -> argv[0]);
-  //       i = 0;
-  //   }
-  //   i++;
-  // }
-
-
-  if((pid = fork()) == 0){
+  //this is called when a fork is not found and just needs to run a command (technically a base case)
+  if ((pid = fork()) == 0) {
     // NOTE:  no need to free(fullpath) ---- ask yourself why?
-    int i = 0;
-    while(p_cmd -> argv[i] != NULL && !my_strequal(p_cmd -> argv[i], "|")){
-      i++;
-    }
-    
-    if(p_cmd -> argv[i] == NULL){
-      execv(fullpath, p_cmd->argv);
-    }
-
-    //argv manipulation and recursive call
-    p_cmd -> argv[i] = NULL;
-    p_cmd -> argv += i+1;
-    execute(p_cmd);
-    p_cmd -> argv -= i+1;
-
+    //because once we execv, it nukes whatever was in memory anyways
     execv(fullpath, p_cmd->argv);
-
     perror("Execute terminated with an error condition!\n");
     exit(1);
   }
 
-  return waitpid(pid, &status, 0);   // wait for child to exit()
+  return wait(&status);   // wait for child to exit()
 }
 
 char* find_fullpath(command_t* p_cmd)

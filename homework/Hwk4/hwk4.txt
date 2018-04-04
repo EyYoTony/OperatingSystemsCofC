@@ -1,0 +1,65 @@
+DUE: Friday, March 2 (NOTE: I'm "pushing back" our tentatively scheduled
+                      midterm)
+
+FORMAT:  submit as one single PDF called, hwk4.pdf
+
+Answer the following problems:
+
+1) What resources are typically shared by all of the threads of a process?
+
+All memory and recources are shared between threads except for the stack.
+
+
+2) List three advantages of ULTs over KLTs
+
+ULT:
+1 - ULTs can run on any OS
+2 - Scheduling can be application specific
+3 - Thread switching does not require kernal mode privileges
+
+KLT:
+1 - The kernal can simulataneously schedule multiple threads from the same process on multiple processors
+2 - If one thread in a process is blocked, the kernal can schedule another thread of the same process
+3 - Kernal routines themselves can be multithreaded
+
+
+3) List two disadvantages of ULTs compared with KLTs
+
+ULT:
+1 - All the threads in the process are blocked when a ULT executes a system call.
+2 - Cannot take advantage of multiprocessing, restricted to one proccessor
+
+KLT:
+1 - The transfer of control from one thread to another within the same process requires a mode switch to the kernal
+2 - And the mode switch takes a long time
+
+
+4) List reasons why a mode switch between threads may be cheaper than
+   a mode switch between processes.
+
+A mode switch between threads may be cheaper than processes, because the threads share memory and resources there is less information needed move to memory during a switch. (they access the same memory). 
+
+Also, answer the following Problems (not review questions) at the end
+of chapter 4:
+
+4.7 - Many current language specifications, such as for C and C++, are inadequate for multithreaded programs. This can have an impact on compilers and the correctness of code, as this problem illustrates. Consider the following declarations and function definition: (rest on pg 192).
+a.) What does the function do?
+
+This function counts the amount of positive values in list "next"
+
+b.) The C language only addresses single-threaded execution. Does the use of parallel threads create any problems or potential problems?
+
+Yes, you might get false increments of global_positives depending on where threads are interrupted and stopped. In the example given, B would increment the global_positives even through a list of negative values was passed.
+
+4.8 - But some existing compilers (including gcc, which tends to be relatively conservative) will "optimize" count_positives to something similar to (see page 192). What problem or potential problem occurs with this compiled version of the program if threads A and B are executed concurrently?
+
+If A and B are executed concurrently, A could easily overwrite the work of B since they are writing to the same global variable. This depends on which thread finishes first.
+
+4.9 - Consider the gollowing code using the POSIX Pthreads API: (see page 192-193)
+a.) What does this program accomplish?
+It creates a thread that prints "." while the original thread prints "o". Each does this 20 times (they alternate because of the sleep) while incrementing the global variable.
+
+b.) Here is the output from the executed program: (see page 193). Is this the output you would expect? If not, what has gone wrong?
+
+No, for one my_thread printed 21 "."s even through it only should only have printed 20 times regardless multithreading. Secondly the expected output should be 40 as they both increment myglobal evey time the threads execute throught the for loop (every time they print). The reason that myglobal is lower than 40 is because mythread could have stopped before assigning j to myglobal and then the original thread wrote to myglobal. when mythread resumed it would overwrite my global to whatever j was before it stopped.  
+
