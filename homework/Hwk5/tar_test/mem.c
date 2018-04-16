@@ -343,5 +343,3 @@ void mem_print()
 //probe count starts at 1
 //range and duration randomness % max + 1
 //2-5 smaller numbers size of 50 20 time units print mem
-//-czvf to compress
-//-xzvf to extract

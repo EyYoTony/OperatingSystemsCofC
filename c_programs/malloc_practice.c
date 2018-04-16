@@ -12,7 +12,7 @@ int main(void){
 	*(x+(10*sizeof(int))) = 27;
 
 	printf("This is the address of x: %p\n", x);
-	printf("This is the value of x: %i\n", *x);
+		
 	printf("This is the value of x[10]: %i\n", *(x+(10*sizeof(int))));
 
 	free(x);
