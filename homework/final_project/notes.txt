@@ -1,0 +1,1 @@
+clock_gettime - high resolution timer. reports nanosecond resolution, but don't rely on this accuracy. get average - might not be mean (huge values got kicked off cpu). maybe mean or median.
