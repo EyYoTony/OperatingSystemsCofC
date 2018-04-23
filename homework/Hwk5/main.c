@@ -24,10 +24,23 @@ int main(int argc, char** argv)
     printf("This program need 4 parameters as follows: mem size, # of runs, time steps per run, random # seed \n");
   }
   else {
+    
+    // mem_init(20);
+    // mem_allocate(NEXTFIT, 4, 1);
+    // mem_allocate(NEXTFIT, 4, 2);
+    // mem_allocate(NEXTFIT, 4, 1);
+    // mem_allocate(NEXTFIT, 4, 2);
+    // //mem_allocate(NEXTFIT, 4, 1);
+    // mem_single_time_unit_transpired();
+    // printf("nextfit probe: %d\n", mem_allocate(NEXTFIT, 3, 10));
+    // printf("nextfit probe: %d\n", mem_allocate(NEXTFIT, 3, 10));
+    // printf("fragmentation: %d\n", mem_fragment_count(MIN_REQUEST_SIZE - 1));
+    // mem_print();
+
     ///get values from argv and convert them to ints
     int init_size = atoi(*(argv+1));
     int run_num = atoi(*(argv+2));
-    int time_passed = atoi(*(argv+3));
+    int total_time = atoi(*(argv+3));
     int random_seed = atoi(*(argv+4));
     //set random seed so we get diffferent rng based on seed
     srand(random_seed);
@@ -35,6 +48,7 @@ int main(int argc, char** argv)
     //malloc arr
     mem_init(init_size);
     //BESTFIT
+    int time_passed = 0;
     int total_failures = 0;
     int total_probes = 0;
     int total_fragmentation = 0;
@@ -43,24 +57,29 @@ int main(int argc, char** argv)
     int allocate_output = 0;
     
     for(int i = 0; i < run_num; i++){
-      rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
-      rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
-      allocate_output = mem_allocate(BESTFIT, rand_size, rand_dur);
-      if(allocate_output == -1){
-        total_failures++;
-      }
-      else{
-        total_probes += allocate_output;
-      }
-      for(int j = 0; j < time_passed; j++){
+      time_passed = 0;
+      while(time_passed < total_time){
+        rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
+        rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
+        allocate_output = mem_allocate(BESTFIT, rand_size, rand_dur);
+        if(allocate_output == -1){
+          total_failures++;
+        }
+        else{
+          total_probes += allocate_output;
+        }
+        //for(int j = 0; j < rand_dur; j++){
         mem_single_time_unit_transpired();
+        time_passed++;
+        //}
+        total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
       }
-      total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
+      mem_clear();
     }
     //output
-    printf("Bestfit avg probes: %lf\n", ((double)total_probes/run_num));
-    printf("Bestfit avg failures: %lf\n", ((double)total_failures/run_num));
-    printf("Bestfit avg fragmentation: %lf\n", ((double)total_fragmentation/run_num));
+    printf("Bestfit avg probes: %lf\n", ((double) total_probes/(run_num*total_time)));
+    printf("Bestfit avg failures: %lf\n", ((double) total_failures/(run_num*total_time)));
+    printf("Bestfit avg fragmentation: %lf\n", ((double) total_fragmentation/(run_num*total_time)));
     mem_clear();
 
     //FIRSTFIT
@@ -72,27 +91,33 @@ int main(int argc, char** argv)
     allocate_output = 0;
     
     for(int i = 0; i < run_num; i++){
-      rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
-      rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
-      allocate_output = mem_allocate(BESTFIT, rand_size, rand_dur);
-      if(allocate_output == -1){
-        total_failures++;
-      }
-      else{
-        total_probes += allocate_output;
-      }
-      for(int j = 0; j < time_passed; j++){
+      time_passed = 0;
+      while(time_passed < total_time){
+        rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
+        rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
+        allocate_output = mem_allocate(FIRSTFIT, rand_size, rand_dur);
+        if(allocate_output == -1){
+          total_failures++;
+        }
+        else{
+          total_probes += allocate_output;
+        }
+        //for(int j = 0; j < rand_dur; j++){
         mem_single_time_unit_transpired();
+        time_passed++;
+        //}
+        total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
       }
-      total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
+      mem_clear();
     }
     //output
-    printf("Firstfit avg probes: %lf\n", ((double)total_probes/run_num));
-    printf("Firstfit avg failures: %lf\n", ((double)total_failures/run_num));
-    printf("Firstfit avg fragmentation: %lf\n", ((double)total_fragmentation/run_num));
+    printf("Firstfit avg probes: %lf\n", ((double) total_probes/(run_num*total_time)));
+    printf("Firstfit avg failures: %lf\n", ((double) total_failures/(run_num*total_time)));
+    printf("Firstfit avg fragmentation: %lf\n", ((double) total_fragmentation/(run_num*total_time)));
     mem_clear();
 
     //NEXTFIT
+    time_passed = 0;
     total_failures = 0;
     total_probes = 0;
     total_fragmentation = 0;
@@ -101,24 +126,29 @@ int main(int argc, char** argv)
     allocate_output = 0;
     
     for(int i = 0; i < run_num; i++){
-      rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
-      rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
-      allocate_output = mem_allocate(BESTFIT, rand_size, rand_dur);
-      if(allocate_output == -1){
-        total_failures++;
-      }
-      else{
-        total_probes += allocate_output;
-      }
-      for(int j = 0; j < time_passed; j++){
+      time_passed = 0;
+      while(time_passed < total_time){
+        rand_dur = rand() % (MAX_DURATION + 1 - MIN_DURATION) + MIN_DURATION;
+        rand_size = rand() % (MAX_REQUEST_SIZE + 1 - MIN_REQUEST_SIZE) + MIN_REQUEST_SIZE;
+        allocate_output = mem_allocate(NEXTFIT, rand_size, rand_dur);
+        if(allocate_output == -1){
+          total_failures++;
+        }
+        else{
+          total_probes += allocate_output;
+        }
+        //for(int j = 0; j < rand_dur; j++){
         mem_single_time_unit_transpired();
+        time_passed++;
+        //}
+        total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
       }
-      total_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE - 1);
+      mem_clear();
     }
     //output
-    printf("Nextfit avg probes: %lf\n", ((double)total_probes/run_num));
-    printf("Nextfit avg failures: %lf\n", ((double)total_failures/run_num));
-    printf("Nextfit avg fragmentation: %lf\n", ((double)total_fragmentation/run_num));
+    printf("Nextfit avg probes: %lf\n", ((double) total_probes/(run_num*total_time)));
+    printf("Nextfit avg failures: %lf\n", ((double) total_failures/(run_num*total_time)));
+    printf("Nextfit avg fragmentation: %lf\n", ((double) total_fragmentation/(run_num*total_time)));
     mem_clear();
 
     //free arr

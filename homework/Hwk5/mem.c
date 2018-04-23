@@ -39,12 +39,14 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
   if(strategy == 0){
     //Bestfit -----------------------------------------------------------------------------------------------------------------------------------------------
     int probe_count = 0;
-    int current_bf = -1;
+    int current_bf_place = -1;
+    int current_bf_size = -1;
     int count = -1;
     dur_t previous = *memory;
 
     //find bestfit and count probes
     //goodluck debugging, you did this to yourself
+    //IK, its not that bad, debugging done
     for(int i = 0; i < sizeof(dur_t)*mem_size; i+=sizeof(dur_t)){
       if(*(memory+i) == previous){
         count++;
@@ -52,15 +54,18 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
       else{
         count++;
         //if open memory
-        if(previous == 0)
+        if(previous == 0){
           probe_count++;
-        if((previous == 0) && (count >= size)){
-          if(current_bf == -1){
-            current_bf = (i-count);
-          }
-          else{
-            if(count < current_bf){
-              current_bf = (i-count);
+          if(count >= size){
+            if(current_bf_size == -1){
+              current_bf_place = (i-count);
+              current_bf_size = count;
+            }
+            else{
+              if(count < current_bf_size){
+               current_bf_place = (i-count);
+               current_bf_size = count;
+              }
             }
           }
         }
@@ -68,40 +73,46 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
       }
       previous = *(memory+i);
     }
+
     count++;
-    if(*(memory+sizeof(dur_t)*mem_size-1) == 0)
+    if(*(memory+sizeof(dur_t)*mem_size-1) == 0){
       probe_count++;
-    if((*(memory+sizeof(dur_t)*mem_size-1) == 0) && (count >= size)){
-      if(current_bf == -1){
-        current_bf = ((sizeof(dur_t)*mem_size-1+1)-count);
-      }
-      else{
-        if(count < current_bf){
-          current_bf = ((sizeof(dur_t)*mem_size-1+1)-count);
+      if(count >= size){
+        if(current_bf_size == -1){
+          current_bf_place = ((sizeof(dur_t)*mem_size-1+1)-count);
+          current_bf_size = count;
+        }
+        else{
+          if(count < current_bf_size){
+            current_bf_place = ((sizeof(dur_t)*mem_size-1+1)-count);
+            current_bf_size = count;
+          }
         }
       }
     }
 
     //output
-    if(current_bf == -1){
+    if(current_bf_place == -1){
       //if allocation was unsuccessful
       return -1;
     }
     else{
       //allocate the memory
-      for(int i = current_bf; i < current_bf+size; i+=sizeof(dur_t)){
+      for(int i = current_bf_place; i < current_bf_place+size; i+=sizeof(dur_t)){
         *(memory+i) = duration;
       }
       //return probe count
       return probe_count;
     }
   }
+
   else if(strategy == 1){
     //Firstfit -------------------------------------------------------------------------------------------------------------------------------
     int probe_count = 0;
     int count = -1;
     dur_t previous = *memory;
     //goodluck again
+    //i think its still good, gj - cleaned it up a bit tho
     for(int i = 0; i < sizeof(dur_t)*mem_size; i+=sizeof(dur_t)){
       if(*(memory+i) == previous){
         count++;
@@ -109,32 +120,33 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
       else{
         count++;
         //if open memory
-        if(previous == 0)
+        if(previous == 0){
           probe_count++;
-        if((previous == 0) && (count >= size)){
-          //allocate memory
-          for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
-            *(memory+j) = duration;
+          if(count >= size){
+            //allocate memory
+            for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
+              *(memory+j) = duration;
+            }
+            //return pc
+            return probe_count;
           }
-          //return pc
-          return probe_count;
         }
         count=0;
       }
       previous = *(memory+i);
     }
     count++;
-    if(*(memory+sizeof(dur_t)*mem_size-1) == 0)
+    if(*(memory+sizeof(dur_t)*mem_size-1) == 0){
       probe_count++;
-    if((*(memory+sizeof(dur_t)*mem_size-1) == 0) && (count >= size)){
-      //allocate memory
-      for(int i = (sizeof(dur_t)*mem_size-count); i < (sizeof(dur_t)*mem_size-count)+size; i+=sizeof(dur_t)){
-        *(memory+i) = duration;
+      if(count >= size){
+        //allocate memory
+        for(int i = (sizeof(dur_t)*mem_size-count); i < (sizeof(dur_t)*mem_size-count)+size; i+=sizeof(dur_t)){
+          *(memory+i) = duration;
+        }
+        //return pc
+        return probe_count;
       }
-      //return pc
-      return probe_count;
     }
-
     //if did not end with any fit
     return -1;
 
@@ -145,6 +157,7 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
     int count = -1;
     dur_t previous = *(memory+last_placement_position);
     //and a third time, GOOD LUCK
+    //YUP
     for(int i = last_placement_position; i < sizeof(dur_t)*mem_size; i+=sizeof(dur_t)){
       if(*(memory+i) == previous){
         count++;
@@ -152,75 +165,90 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
       else{
         count++;
         //if open memory
-        if(previous == 0)
+        if(previous == 0){
           probe_count++;
-        if((previous == 0) && (count >= size)){
-          //allocate memory
-          for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
-            *(memory+j) = duration;
+          if(count >= size){
+            //allocate memory
+            for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
+              *(memory+j) = duration;
+            }
+            //return pc
+            last_placement_position = (i-count)+size;
+            return probe_count;
           }
-          //return pc
-          last_placement_position = (i-count)+size;
-          return probe_count;
-        }
+        }  
+
         count = 0;
       }
       previous = *(memory+i);
     }
     count++;
-    if(*(memory+sizeof(dur_t)*mem_size-1) == 0)
+    if(*(memory+sizeof(dur_t)*mem_size-1) == 0){
       probe_count++;
-    if((*(memory+sizeof(dur_t)*mem_size-1) == 0) && (count >= size)){
-      //allocate memory
-      for(int i = (sizeof(dur_t)*mem_size-count); i < (sizeof(dur_t)*mem_size-count)+size; i+=sizeof(dur_t)){
-        *(memory+i) = duration;
+      if(count >= size){
+        //allocate memory
+        for(int i = (sizeof(dur_t)*mem_size-count); i < (sizeof(dur_t)*mem_size-count)+size; i+=sizeof(dur_t)){
+          *(memory+i) = duration;
+        }
+        //return pc
+        last_placement_position = (sizeof(dur_t)*mem_size-count)+size;
+        return probe_count;
       }
-      //return pc
-      last_placement_position = (sizeof(dur_t)*mem_size-count)+size;
-      return probe_count;
     }
+
     //loop around front front if no free space found
+    //exacly like first fit after this point
     count = -1;
     previous = *memory;
-    for(int i = 0; i < last_placement_position; i+=sizeof(dur_t)){
+    for(int i = 0; i < sizeof(dur_t)*mem_size; i+=sizeof(dur_t)){
       if(*(memory+i) == previous){
         count++;
       }
       else{
         count++;
         //if open memory
-        if(previous == 0)
+        if(previous == 0){
           probe_count++;
-        if((previous == 0) && (count >= size)){
-          //allocate memory
-          for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
-            *(memory+j) = duration;
+          if(count >= size){
+            //allocate memory
+            for(int j = (i-count); j < (i-count)+size; j+=sizeof(dur_t)){
+              *(memory+j) = duration;
+            }
+            //return pc
+            last_placement_position = (i-count)+size;
+            return probe_count;
           }
-          //return pc
-          last_placement_position = (i-count)+size;
-          return probe_count;
         }
-        count = 0;
+        count=0;
       }
       previous = *(memory+i);
     }
-    if(*(memory+last_placement_position-1) == 0)
+    count++;
+    if(*(memory+sizeof(dur_t)*mem_size-1) == 0){
       probe_count++;
-    if((*(memory+last_placement_position-1) == 0) && (count >= size)){
-      //allocate memory
-      for(int i = (last_placement_position-count); i < (last_placement_position-count)+size; i+=sizeof(dur_t)){
-        *(memory+i) = duration;
+      if(count >= size){
+        //allocate memory
+        for(int i = (sizeof(dur_t)*mem_size-count); i < (sizeof(dur_t)*mem_size-count)+size; i+=sizeof(dur_t)){
+          *(memory+i) = duration;
+        }
+        //return pc
+        last_placement_position = (last_placement_position-count)+size;
+        return probe_count;
       }
-      //return pc
-      last_placement_position = (last_placement_position-count)+size;
-      return probe_count;
     }
 
+
+
     //if did not end with any fit
+    //could get messy if it gets stuck in the middle if all is clear
+    //might lead to larger probe later needs testing
+    //last_placement_position = 0;
     return -1;
   }
 
   // if for some reason none of the correct enums were called
+  //should not get here
+  printf("THIS SHOULD NOT BE HAPPENING, ERRORs\n");
   return 0;
 }
 
@@ -258,8 +286,9 @@ int mem_fragment_count(int frag_size)
     }
     else{
       count++;
-      if((*(memory+i) == 0) && (count <= frag_size))
+      if((previous == 0) && (count <= frag_size)){
         frag_count++;
+      }
       count = 0;
     }
     previous = *(memory+i);
